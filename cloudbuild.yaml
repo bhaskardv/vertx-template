@@ -173,6 +173,9 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/vertx-template-postgres:latest', '-f', 'Dockerfile_postgres', '.']
 
+# Build timeout
+timeout: 1800s
+
 #
 # Uploading GCR images for application jar
 #
