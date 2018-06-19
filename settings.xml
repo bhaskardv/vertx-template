@@ -1,5 +1,25 @@
-<settings>
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
+  <!-- 
+    IRT Maven settings  
+
+    An example version of this file can be found in the irt-maven project located at 
+      https://irt-svn.stanford.edu/repos/irt/common/irt-maven/trunk/conf/settings.xml
+
+    These settings direct ALL Maven requests to the irt-maven repository by overriding
+    the definition of the central repository.  For more information on how and why this
+    is done read  http://books.sonatype.com/nexus-book/reference/maven-sect-single-group.html.
+
+    This file should be placed in one of two possible locations.
+      The Maven install: $M2_HOME/conf/settings.xml
+      A user's install: ${user.home}/.m2/settings.xml
+
+    For more information Maven settings see http://maven.apache.org/settings.html
+  -->
   <proxies>
     <proxy>
       <active>true</active>
@@ -11,19 +31,10 @@
     </proxy>
   </proxies>
 
-  <servers>
-    <server>
-      <id>${env.MAVEN_ID}</id>
-      <username>${env.MAVEN_USERNAME}</username>
-      <password>${env.MAVEN_PASSWORD}</password>
-    </server>
-  </servers>
-
-  <mirrors>
-    <mirror>
-      <id>${env.MAVEN_ID}</id>
+ <mirrors>
+   <mirror>
       <mirrorOf>*</mirrorOf>
-      <url>http://${env.MAVEN_HOST}:${env.MAVEN_PORT}/repository/maven-public/</url>
+      <url>https://${env.MAVEN_HOST}/nexus/content/groups/public</url>
     </mirror>
   </mirrors>
 
@@ -31,13 +42,16 @@
     <profile>
       <id>${env.MAVEN_ID}</id>
       <!--Enable snapshots for the built in central repo to direct -->
-      <!--all requests to nexus via the mirror -->
+      <!--all requests to irt-maven via the mirror -->
       <repositories>
         <repository>
           <id>central</id>
           <url>http://central</url>
           <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+          </snapshots>
         </repository>
       </repositories>
      <pluginRepositories>
@@ -54,4 +68,23 @@
     <!--make the profile active all the time -->
     <activeProfile>${env.MAVEN_ID}</activeProfile>
   </activeProfiles>
+
+  <!-- 
+    Update the usernames and passwords in this section if the system will 
+    need to deploy Maven artifacts to the Maven repository.  Typically this 
+    is only done on the continuous integration server (ie. Hudson).
+  -->
+  <servers>
+    <server>
+      <id>snapshots</id>
+      <username>NEXUS_USERNAME</username>
+      <password>NEXUS_PASSWORD</password>
+    </server>
+    <server>
+      <id>releases</id>
+      <username>NEXUS_USERNAME</username>
+      <password>NEXUS_PASSWORD</password>
+    </server>
+  </servers>
+
 </settings>

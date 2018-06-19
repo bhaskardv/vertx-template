@@ -84,40 +84,19 @@
     <tag>HEAD</tag>
   </scm>
 
-  <repositories>
-    <repository>
-      <id>packagecloud</id>
-      <url>https://packagecloud.io/garricko/travis/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>central</id>
-      <url>https://repo.maven.apache.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
   <distributionManagement>
     <snapshotRepository>
-      <id>packagecloud</id>
-      <url>https://packagecloud.io/garricko/travis/maven2</url>
+      <id>${env.MAVEN_ID}</id>
+      <name>Snapshot</name>
+      <url>http://${env.MAVEN_HOST}:${env.MAVEN_PORT}/repository/maven-snapshots</url>
     </snapshotRepository>
     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>${env.MAVEN_ID}</id>
+      <name>Releases</name>
+      <url>http://${env.MAVEN_HOST}:${env.MAVEN_PORT}/repository/maven-releases</url>
     </repository>
   </distributionManagement>
+
 
   <build>
     <plugins>
@@ -182,11 +161,11 @@
          -Dcheck2 (a.k.a. -Pchecker)
          -->
     <profile>
-      <id>packagecloud</id>
+      <id>irt-maven</id>
       <repositories>
         <repository>
-          <id>packagecloud</id>
-          <url>https://packagecloud.io/garricko/travis/maven2</url>
+          <id>irt-maven</id>
+          <url>https://irt-maven.stanford.edu/nexus/content/groups/public</url>
           <snapshots>
             <enabled>true</enabled>
             <updatePolicy>always</updatePolicy>
