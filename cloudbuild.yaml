@@ -35,7 +35,7 @@ steps:
 # Copying customized build files 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "cp ./oracle_sample.properties ./sample.properties; cp ./pom_proxy.xml ./pom.xml"]
+  args: ['-c', "cp ./oracle_sample.properties ./sample.properties"]
 
 # Authenticating to Docker Store
 - name: 'gcr.io/cloud-builders/docker'
