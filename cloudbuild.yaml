@@ -58,6 +58,42 @@ steps:
   env: ['ORACLEDB_IMAGE=store/oracle/database-enterprise:12.2.0.1-slim', 'ORACLEDB_SERVER=oracle-dbserver',
         'ORACLEDB_NET=stanford-oracledb']
 
+# Running  mvn verify
+# Note: docker volume(m2) mounted as local maven repo(~/.m2) is used in other build steps
+#       to save build time
+- name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'm2'
+    path: '/mvn_local_repo'
+  entrypoint: 'bash'
+  args: ['-c', "docker run -e PROXY_USERNAME -e PROXY_PASSWORD \
+         -e MAVEN_ID -e PROXY_HOST -e MAVEN_HOST \
+         --name $$APP_BUILD_SERVER --net $$ORACLEDB_NET \
+         -v /workspace:/workspace -v /mvn_local_repo:/root/.m2 --entrypoint 'bash' $$APP_BUILD_IMAGE \
+         -c 'cd /workspace; cp settings.xml ~/.m2/settings.xml; mvn -Poracle -DskipTests -Dcheck1 verify'"]
+  env: ['APP_BUILD_SERVER=oracledb-app-verify1-server', 'ORACLEDB_NET=stanford-oracledb',
+        'APP_BUILD_IMAGE=gcr.io/cloud-builders/mvn', 'MAVEN_ID=irt-maven',
+        'PROXY_HOST=35.237.190.202', 'MAVEN_HOST=irt-maven.stanford.edu']
+  secretEnv: ['PROXY_USERNAME', 'PROXY_PASSWORD']
+
+# Running  mvn verify
+# Note: docker volume(m2) mounted as local maven repo(~/.m2) is used in other build steps
+#       to save build time
+- name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'm2'
+    path: '/mvn_local_repo'
+  entrypoint: 'bash'
+  args: ['-c', "docker run -e PROXY_USERNAME -e PROXY_PASSWORD \
+         -e MAVEN_ID -e PROXY_HOST -e MAVEN_HOST \
+         --name $$APP_BUILD_SERVER --net $$ORACLEDB_NET \ 
+         -v /workspace:/workspace -v /mvn_local_repo:/root/.m2 --entrypoint 'bash' $$APP_BUILD_IMAGE \
+         -c 'cd /workspace; mvn -Poracle -DskipTests -Dcheck2 verify'"]
+  env: ['APP_BUILD_SERVER=oracledb-app-verify2-server', 'ORACLEDB_NET=stanford-oracledb',
+        'APP_BUILD_IMAGE=gcr.io/cloud-builders/mvn', 'MAVEN_ID=irt-maven',
+        'PROXY_HOST=35.237.190.202', 'MAVEN_HOST=irt-maven.stanford.edu']
+  secretEnv: ['PROXY_USERNAME', 'PROXY_PASSWORD']
+
 # Building application jar using APP build server
 # Note: docker volume(m2) mounted as local maven repo(~/.m2) is used in other build steps
 #       to save build time
@@ -77,9 +113,8 @@ steps:
          -e MAVEN_ID -e PROXY_HOST -e MAVEN_HOST -e SRCCLR_API_TOKEN \
          --name $$APP_BUILD_SERVER --net $$ORACLEDB_NET \
          -v /workspace:/workspace -v /mvn_local_repo:/root/.m2 --entrypoint 'bash' $$APP_BUILD_IMAGE \
-         -c 'apt-get update; apt-get install curl -y; cd /workspace; cp settings.xml ~/.m2/settings.xml; \
-         mvn -Poracle -DskipTests -Dcheck1 verify; mvn -Poracle -DskipTests -Dcheck2 clean verify; \
-         mvn -Poracle -DskipTests clean package; curl -sSL https://download.sourceclear.com/ci.sh | sh'"]
+         -c 'apt-get update; apt-get install curl -y; cd /workspace; mvn -Poracle -DskipTests clean package; \
+         curl -sSL https://download.sourceclear.com/ci.sh | sh'"]
   env: ['APP_BUILD_SERVER=oracledb-app-build-server', 'ORACLEDB_NET=stanford-oracledb',
         'APP_BUILD_IMAGE=gcr.io/cloud-builders/mvn', 'MAVEN_ID=irt-maven',
         'PROXY_HOST=35.237.190.202', 'MAVEN_HOST=irt-maven.stanford.edu']
@@ -155,7 +190,7 @@ steps:
          -e MAVEN_ID -e PROXY_HOST -e MAVEN_HOST -e SRCCLR_API_TOKEN \
          --name $$APP_BUILD_SERVER --net $$POSTGRES_NET \
          -v /workspace:/workspace -v /mvn_local_repo:/root/.m2 --entrypoint 'bash' $$APP_BUILD_IMAGE \
-         -c 'apt-get update; apt-get install curl -y; cd /workspace; mvn -Ppostgres -DskipTests -Dcheck1 verify; \
+         -ce 'apt-get update; apt-get install curl -y; cd /workspace; mvn -Ppostgres -DskipTests -Dcheck1 verify; \
          mvn -Ppostgres -DskipTests -Dcheck2 clean verify; mvn -DskipTests -Ppostgres clean package; \
          curl -sSL https://download.sourceclear.com/ci.sh | sh'"]
   env: ['APP_BUILD_SERVER=postgres-app-build-server', 'POSTGRES_NET=stanford-postgres',
