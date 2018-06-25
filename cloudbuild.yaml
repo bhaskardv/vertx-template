@@ -4,9 +4,8 @@ steps:
 #
 # Steps for building and testing vertx-template with Oracle DB
 #
-
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: ['-c', "docker run --link metadata:metadata.google.internal --name APP_BUILD_SERVER -v /workspace:/workspace \
         --entrypoint 'bash' 'gcr.io/cloud-builders/mvn' \
-         -c 'cd /workspace; ./check_oracledb_health.sh' "]
+         -c 'cd /workspace; ./check_oracledb_health.sh' ; docker inspect metadata"]
