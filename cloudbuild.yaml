@@ -7,6 +7,6 @@ steps:
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "docker run --link metadata --name APP_BUILD_SERVER \
+  args: ['-c', "docker run --link metadata --name APP_BUILD_SERVER -v /workspace:/workspace \
         --entrypoint 'bash' 'gcr.io/cloud-builders/mvn' \
-         -c './check_oracledb_health.sh' "]
+         -c 'cd /workspace; ./check_oracledb_health.sh' "]
