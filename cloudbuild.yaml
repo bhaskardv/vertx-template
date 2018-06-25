@@ -14,4 +14,4 @@ steps:
   entrypoint: 'bash'
   args: ['-c', "docker run --link metadata --name APP_BUILD_SERVER \
         --entrypoint 'bash' 'gcr.io/cloud-builders/mvn' \
-         -c 'ls' "]
+         -c './check_oracledb_health.sh' "]
