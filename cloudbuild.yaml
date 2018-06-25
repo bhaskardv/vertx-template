@@ -7,6 +7,11 @@ steps:
 
 - name: 'gcr.io/cloud-builders/mvn'
   entrypoint: 'bash'
-  args: ['-c', "docker ps"]
-  #args: ['-c', "apt-get update; apt-get install curl -y; curl 'http://metadata.google.internal/computeMetadata/v1/project/' -H 'Metadata-Flavor: Google'"]
+  #args: ['-c', "docker ps"]
+  args: ['-c', "docker rapt-get update; apt-get install curl -y; curl 'http://metadata.google.internal/computeMetadata/v1/project/' -H 'Metadata-Flavor: Google'"]
  
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', "docker run --link metadata --name APP_BUILD_SERVER \
+        --entrypoint 'bash' 'gcr.io/cloud-builders/mvn' \
+         -c 'ls' "]
